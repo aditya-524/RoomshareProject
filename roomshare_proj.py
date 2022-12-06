@@ -5,7 +5,7 @@ import time
 import googlemaps
 
 URL_TO_YOUR_GOOGLE_FORM = "https://forms.gle/PNtbfbjUxQ3uyfUX6"
-
+GOOGLE_API_KEY = "AIzaSyBYI4gLqpFfXGW2hNEv-sPzj1anduiGGZY" #This is for sake of this Project, I will have deleted this after succesful operation of Project
 header = {
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36",
     "Accept-Language": "en-GB,en-US;q=0.9,en;q=0.8"
@@ -21,6 +21,7 @@ all_heading = []
 all_price = []
 all_location = []
 all_listed_date = []
+all_distance = []
 for listings_wrapper in soup.find_all("div", class_="user-ad-collection-new-design__wrapper--row"):
     for listing in listings_wrapper.find_all("a",
                                              class_="user-ad-row-new-design link link--base-color-inherit link--hover-color-none link--no-underline"):
@@ -32,16 +33,21 @@ for listings_wrapper in soup.find_all("div", class_="user-ad-collection-new-desi
         all_link.append(f"https://www.gumtree.com.au{link}")
         all_heading.append(heading[:-2])
         all_price.append(price[16:-1])
-        all_location.append(location[18:])
+        all_location.append(location[18:]+" ,SA")
         all_listed_date.append(listed_date[:-1])
 
 # TODO Get distance from the address to University
-# gmaps = googlemaps.Client(key='Your_API_key')
-
+#Using Google Maps module we get the distance of each location with University
+gmaps = googlemaps.Client(key=GOOGLE_API_KEY)
+for locs in all_location:
+    my_dist = gmaps.distance_matrix(locs, 'Ingkarni Wardli, Adelaide SA')['rows'][0]['elements'][0]
+    all_distance.append(my_dist['distance']['text'])
 
 # TODO Copy data from lists to the form
+#Using Selenium to store the data inside a Google Form
 chrome_driver_path = "C:/Users/adity/Development/chromedriver.exe"  # Path of the Chrome Driver
 driver = webdriver.Chrome(executable_path=chrome_driver_path)
+
 
 for n in range(len(all_link)):
     driver.get(URL_TO_YOUR_GOOGLE_FORM)
@@ -56,14 +62,15 @@ for n in range(len(all_link)):
         '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[4]/div/div/div[2]/div/div[1]/div/div[1]/input')
     link_f = driver.find_element_by_xpath(
         '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[5]/div/div/div[2]/div/div[1]/div/div[1]/input')
-    # distance_f = driver.find_element_by_xpath(
-    #     '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[6]/div/div/div[2]/div/div[1]/div/div[1]/input')
+    distance_f = driver.find_element_by_xpath(
+        '//*[@id="mG61Hd"]/div[2]/div/div[2]/div[6]/div/div/div[2]/div/div[1]/div/div[1]/input')
     submit_button = driver.find_element_by_xpath('//*[@id="mG61Hd"]/div[2]/div/div[3]/div[1]/div/div')
     heading_f.send_keys(all_heading[n])
     location_f.send_keys(all_location[n])
     price_f.send_keys(all_price[n])
     listed_date_f.send_keys(all_listed_date[n])
     link_f.send_keys(all_link[n])
-    # distance_f.send_keys(all_heading[n])
+    distance_f.send_keys(all_distance[n])
 
     submit_button.click()
+driver.quit()
