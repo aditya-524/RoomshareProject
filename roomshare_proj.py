@@ -4,8 +4,8 @@ from selenium import webdriver
 import time
 import googlemaps
 
-URL_TO_YOUR_GOOGLE_FORM = "https://forms.gle/PNtbfbjUxQ3uyfUX6"
-GOOGLE_API_KEY = "AIzaSyBYI4gLqpFfXGW2hNEv-sPzj1anduiGGZY" #This is for sake of this Project, I will have deleted this after succesful operation of Project
+URL_TO_YOUR_GOOGLE_FORM = # Insert URL to Google Form
+GOOGLE_API_KEY =# Insert Google API Key
 header = {
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36",
     "Accept-Language": "en-GB,en-US;q=0.9,en;q=0.8"
